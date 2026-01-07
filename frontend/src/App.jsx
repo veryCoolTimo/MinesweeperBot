@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react'
+import { useCallback, useState, useEffect, useRef } from 'react'
 import Header from './components/Header'
 import Board from './components/Board'
 import GameOverModal from './components/GameOverModal'
@@ -22,6 +22,8 @@ function App() {
 
   const [showModal, setShowModal] = useState(false)
   const [flagMode, setFlagMode] = useState(false)
+  const lastTapRef = useRef(0)
+  const doubleTapDelay = 300 // ms
 
   // Reset flag mode on new game
   useEffect(() => {
@@ -54,6 +56,17 @@ function App() {
   }, [gameState, difficulty, time, user, hapticFeedback, sendData])
 
   const onCellClick = useCallback((row, col) => {
+    const now = Date.now()
+    const timeSinceLastTap = now - lastTapRef.current
+    lastTapRef.current = now
+
+    // Double tap toggles flag mode
+    if (timeSinceLastTap < doubleTapDelay) {
+      hapticFeedback('medium')
+      setFlagMode(prev => !prev)
+      return
+    }
+
     // If flag mode is on, place flag instead of revealing
     if (flagMode) {
       const result = handleCellRightClick(row, col)
@@ -65,7 +78,7 @@ function App() {
 
     const result = handleCellClick(row, col)
 
-    if (result.action === 'reveal') {
+    if (result.action === 'reveal' || result.action === 'chord') {
       hapticFeedback('light')
     } else if (result.action === 'lost') {
       hapticFeedback('error')
@@ -123,7 +136,7 @@ function App() {
         </div>
 
         <p className="hint">
-          {flagMode ? 'Tap to place flag' : 'Tap to reveal'}
+          {flagMode ? 'Tap to flag • Double tap to switch' : 'Tap to reveal • Double tap for flag mode'}
         </p>
       </main>
 
