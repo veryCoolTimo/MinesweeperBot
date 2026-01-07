@@ -1,0 +1,55 @@
+.timed-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, var(--accent) 0%, #5856d6 100%);
+  z-index: 50;
+  box-shadow: var(--shadow-md);
+}
+
+.timed-timer {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  font-variant-numeric: tabular-nums;
+  transition: all var(--transition-fast);
+}
+
+.timed-timer.low {
+  color: #ffcc00;
+}
+
+.timed-timer.critical {
+  color: #ff3b30;
+  animation: pulse 0.5s ease infinite;
+}
+
+.timed-wins {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.timed-wins-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+}
+
+.timed-wins-label {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}

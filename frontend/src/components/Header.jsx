@@ -2,14 +2,25 @@ import { memo } from 'react'
 import { DIFFICULTIES } from '../utils/minesweeper'
 import './Header.css'
 
+const MODE_LABELS = {
+  classic: '🎮 Classic',
+  timed: '⏱️ Timed',
+  noflags: '🚫 No Flags',
+  tutorial: '📖 Tutorial'
+}
+
 function Header({
   time,
   flagCount,
   mineCount,
   difficulty,
   gameState,
+  gameMode,
+  streak,
   onDifficultyChange,
-  onNewGame
+  onNewGame,
+  onModeClick,
+  onStatsClick
 }) {
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60)
@@ -19,6 +30,22 @@ function Header({
 
   return (
     <div className="header">
+      {/* Mode and Stats row */}
+      <div className="header-actions">
+        <button className="action-btn mode-btn" onClick={onModeClick}>
+          {MODE_LABELS[gameMode] || '🎮 Classic'}
+        </button>
+        {streak > 0 && (
+          <div className="streak-badge">
+            🔥 {streak}
+          </div>
+        )}
+        <button className="action-btn stats-btn" onClick={onStatsClick}>
+          📊
+        </button>
+      </div>
+
+      {/* Game info row */}
       <div className="header-top">
         <div className="stat">
           <span className="stat-icon">💣</span>
@@ -38,6 +65,7 @@ function Header({
         </div>
       </div>
 
+      {/* Difficulty selector */}
       <div className="difficulty-selector">
         {Object.entries(DIFFICULTIES).map(([key, value]) => (
           <button

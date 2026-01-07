@@ -2,7 +2,52 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.action-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.action-btn:hover {
+  background: var(--cell-hidden-hover);
+}
+
+.mode-btn {
+  flex: 1;
+}
+
+.stats-btn {
+  font-size: 18px;
+  padding: 8px 12px;
+}
+
+.streak-badge {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #ff9500 0%, #ff3b30 100%);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  animation: glow 2s ease infinite;
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(255, 149, 0, 0.5); }
+  50% { box-shadow: 0 0 15px rgba(255, 149, 0, 0.8); }
 }
 
 .header-top {

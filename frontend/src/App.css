@@ -15,6 +15,10 @@
   gap: 16px;
 }
 
+.game-area.timed-active {
+  padding-top: 70px;
+}
+
 .controls {
   display: flex;
   justify-content: center;
