@@ -1,0 +1,19 @@
+.board {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: min(90vw, 400px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+
+@media (max-width: 380px) {
+  .board {
+    gap: 3px;
+    padding: 8px;
+  }
+}
