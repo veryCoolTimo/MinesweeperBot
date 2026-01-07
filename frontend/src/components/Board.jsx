@@ -2,7 +2,7 @@ import { memo } from 'react'
 import Cell from './Cell'
 import './Board.css'
 
-function Board({ board, onCellClick, onCellRightClick, disabled }) {
+function Board({ board, onCellClick, disabled }) {
   const rows = board.length
   const cols = board[0]?.length || 0
 
@@ -22,7 +22,6 @@ function Board({ board, onCellClick, onCellRightClick, disabled }) {
             row={rowIndex}
             col={colIndex}
             onClick={onCellClick}
-            onRightClick={onCellRightClick}
             disabled={disabled}
           />
         ))

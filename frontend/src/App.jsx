@@ -21,6 +21,14 @@ function App() {
   } = useGame('easy')
 
   const [showModal, setShowModal] = useState(false)
+  const [flagMode, setFlagMode] = useState(false)
+
+  // Reset flag mode on new game
+  useEffect(() => {
+    if (gameState === GAME_STATE.IDLE) {
+      setFlagMode(false)
+    }
+  }, [gameState])
 
   // Show modal on game end
   useEffect(() => {
@@ -46,6 +54,15 @@ function App() {
   }, [gameState, difficulty, time, user, hapticFeedback, sendData])
 
   const onCellClick = useCallback((row, col) => {
+    // If flag mode is on, place flag instead of revealing
+    if (flagMode) {
+      const result = handleCellRightClick(row, col)
+      if (result.action === 'flag' || result.action === 'unflag') {
+        hapticFeedback('medium')
+      }
+      return
+    }
+
     const result = handleCellClick(row, col)
 
     if (result.action === 'reveal') {
@@ -55,15 +72,12 @@ function App() {
     } else if (result.action === 'won') {
       hapticFeedback('success')
     }
-  }, [handleCellClick, hapticFeedback])
+  }, [handleCellClick, handleCellRightClick, hapticFeedback, flagMode])
 
-  const onCellRightClick = useCallback((row, col) => {
-    const result = handleCellRightClick(row, col)
-
-    if (result.action === 'flag' || result.action === 'unflag') {
-      hapticFeedback('medium')
-    }
-  }, [handleCellRightClick, hapticFeedback])
+  const toggleFlagMode = useCallback(() => {
+    hapticFeedback('light')
+    setFlagMode(prev => !prev)
+  }, [hapticFeedback])
 
   const onDifficultyChange = useCallback((newDifficulty) => {
     hapticFeedback('light')
@@ -95,12 +109,21 @@ function App() {
         <Board
           board={board}
           onCellClick={onCellClick}
-          onCellRightClick={onCellRightClick}
           disabled={isGameOver}
         />
 
+        <div className="controls">
+          <button
+            className={`flag-toggle ${flagMode ? 'active' : ''}`}
+            onClick={toggleFlagMode}
+          >
+            <span className="flag-icon">🚩</span>
+            <span className="flag-label">{flagMode ? 'Flag ON' : 'Flag OFF'}</span>
+          </button>
+        </div>
+
         <p className="hint">
-          Tap to reveal • Long press to flag
+          {flagMode ? 'Tap to place flag' : 'Tap to reveal'}
         </p>
       </main>
 

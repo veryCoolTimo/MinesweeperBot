@@ -15,6 +15,49 @@
   gap: 16px;
 }
 
+.controls {
+  display: flex;
+  justify-content: center;
+}
+
+.flag-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.flag-toggle:hover {
+  transform: scale(1.02);
+}
+
+.flag-toggle:active {
+  transform: scale(0.98);
+}
+
+.flag-toggle.active {
+  background: var(--warning);
+  box-shadow: var(--shadow-md);
+}
+
+.flag-toggle.active .flag-label {
+  color: white;
+}
+
+.flag-icon {
+  font-size: 20px;
+}
+
+.flag-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .hint {
   font-size: 13px;
   color: var(--text-tertiary);

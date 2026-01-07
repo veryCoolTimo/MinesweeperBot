@@ -1,4 +1,4 @@
-import { memo, useCallback, useRef } from 'react'
+import { memo, useCallback } from 'react'
 import { CELL_STATE } from '../utils/minesweeper'
 import './Cell.css'
 
@@ -13,42 +13,7 @@ const NUMBER_COLORS = {
   8: 'var(--num-8)'
 }
 
-function Cell({ cell, row, col, onClick, onRightClick, disabled }) {
-  const longPressTimer = useRef(null)
-  const isLongPress = useRef(false)
-
-  const handleTouchStart = useCallback((e) => {
-    isLongPress.current = false
-    longPressTimer.current = setTimeout(() => {
-      isLongPress.current = true
-      onRightClick(row, col)
-    }, 400)
-  }, [row, col, onRightClick])
-
-  const handleTouchEnd = useCallback((e) => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current)
-      longPressTimer.current = null
-    }
-
-    if (!isLongPress.current) {
-      onClick(row, col)
-    }
-    isLongPress.current = false
-  }, [row, col, onClick])
-
-  const handleTouchMove = useCallback(() => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current)
-      longPressTimer.current = null
-    }
-  }, [])
-
-  const handleContextMenu = useCallback((e) => {
-    e.preventDefault()
-    onRightClick(row, col)
-  }, [row, col, onRightClick])
-
+function Cell({ cell, row, col, onClick, disabled }) {
   const handleClick = useCallback((e) => {
     e.preventDefault()
     onClick(row, col)
@@ -91,10 +56,6 @@ function Cell({ cell, row, col, onClick, onRightClick, disabled }) {
     <button
       className={cellClass}
       onClick={handleClick}
-      onContextMenu={handleContextMenu}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onTouchMove={handleTouchMove}
       disabled={disabled}
       aria-label={`Cell ${row + 1}, ${col + 1}`}
     >
