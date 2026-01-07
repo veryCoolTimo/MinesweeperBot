@@ -4,9 +4,9 @@ const STORAGE_KEY = 'minesweeper_stats'
 
 const defaultStats = {
   classic: {
-    easy: { played: 0, won: 0, bestTime: null, totalTime: 0 },
-    medium: { played: 0, won: 0, bestTime: null, totalTime: 0 },
-    hard: { played: 0, won: 0, bestTime: null, totalTime: 0 }
+    easy: { played: 0, won: 0, bestTime: null, totalTime: 0, bestEfficiency: 0, bestBv3s: 0 },
+    medium: { played: 0, won: 0, bestTime: null, totalTime: 0, bestEfficiency: 0, bestBv3s: 0 },
+    hard: { played: 0, won: 0, bestTime: null, totalTime: 0, bestEfficiency: 0, bestBv3s: 0 }
   },
   timed: {
     easy: { played: 0, bestScore: 0, totalWins: 0 },
@@ -14,9 +14,9 @@ const defaultStats = {
     hard: { played: 0, bestScore: 0, totalWins: 0 }
   },
   noflags: {
-    easy: { played: 0, won: 0, bestTime: null },
-    medium: { played: 0, won: 0, bestTime: null },
-    hard: { played: 0, won: 0, bestTime: null }
+    easy: { played: 0, won: 0, bestTime: null, bestEfficiency: 0, bestBv3s: 0 },
+    medium: { played: 0, won: 0, bestTime: null, bestEfficiency: 0, bestBv3s: 0 },
+    hard: { played: 0, won: 0, bestTime: null, bestEfficiency: 0, bestBv3s: 0 }
   },
   currentStreak: 0,
   bestStreak: 0,
@@ -53,9 +53,10 @@ export function useStats() {
     saveStats(stats)
   }, [stats])
 
-  const recordWin = useCallback((mode, difficulty, timeSeconds) => {
+  const recordWin = useCallback((mode, difficulty, timeSeconds, efficiency = 0, bv3s = 0) => {
     setStats(prev => {
       const newStats = { ...prev }
+      const bv3sNum = parseFloat(bv3s) || 0
 
       if (mode === 'classic') {
         const diffStats = { ...prev.classic[difficulty] }
@@ -65,6 +66,12 @@ export function useStats() {
         if (diffStats.bestTime === null || timeSeconds < diffStats.bestTime) {
           diffStats.bestTime = timeSeconds
         }
+        if (efficiency > (diffStats.bestEfficiency || 0)) {
+          diffStats.bestEfficiency = efficiency
+        }
+        if (bv3sNum > (diffStats.bestBv3s || 0)) {
+          diffStats.bestBv3s = bv3sNum
+        }
         newStats.classic = { ...prev.classic, [difficulty]: diffStats }
       } else if (mode === 'noflags') {
         const diffStats = { ...prev.noflags[difficulty] }
@@ -72,6 +79,12 @@ export function useStats() {
         diffStats.won++
         if (diffStats.bestTime === null || timeSeconds < diffStats.bestTime) {
           diffStats.bestTime = timeSeconds
+        }
+        if (efficiency > (diffStats.bestEfficiency || 0)) {
+          diffStats.bestEfficiency = efficiency
+        }
+        if (bv3sNum > (diffStats.bestBv3s || 0)) {
+          diffStats.bestBv3s = bv3sNum
         }
         newStats.noflags = { ...prev.noflags, [difficulty]: diffStats }
       }

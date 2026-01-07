@@ -56,6 +56,14 @@ function StatsModal({ stats, onClose, onReset }) {
                   <span>Best Time</span>
                   <span>{formatTime(classic[diff].bestTime)}</span>
                 </div>
+                <div className="stats-card-row">
+                  <span>Best Efficiency</span>
+                  <span>{classic[diff].bestEfficiency || 0}%</span>
+                </div>
+                <div className="stats-card-row">
+                  <span>Best 3BV/s</span>
+                  <span>{(classic[diff].bestBv3s || 0).toFixed(2)}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -95,6 +103,14 @@ function StatsModal({ stats, onClose, onReset }) {
                 <div className="stats-card-row highlight">
                   <span>Best Time</span>
                   <span>{formatTime(noflags[diff].bestTime)}</span>
+                </div>
+                <div className="stats-card-row">
+                  <span>Best Efficiency</span>
+                  <span>{noflags[diff].bestEfficiency || 0}%</span>
+                </div>
+                <div className="stats-card-row">
+                  <span>Best 3BV/s</span>
+                  <span>{(noflags[diff].bestBv3s || 0).toFixed(2)}</span>
                 </div>
               </div>
             ))}

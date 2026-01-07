@@ -8,7 +8,8 @@ import {
   revealAllMines,
   toggleFlag,
   checkWin,
-  countFlags
+  countFlags,
+  calculate3BV
 } from '../utils/minesweeper'
 
 export const GAME_STATE = {
@@ -28,6 +29,8 @@ export function useGame(initialDifficulty = 'easy') {
   const [time, setTime] = useState(0)
   const [flagCount, setFlagCount] = useState(0)
   const [firstClick, setFirstClick] = useState(true)
+  const [clickCount, setClickCount] = useState(0)
+  const [board3BV, setBoard3BV] = useState(0)
   const timerRef = useRef(null)
 
   const config = DIFFICULTIES[difficulty]
@@ -62,6 +65,8 @@ export function useGame(initialDifficulty = 'easy') {
     setTime(0)
     setFlagCount(0)
     setFirstClick(true)
+    setClickCount(0)
+    setBoard3BV(0)
   }, [difficulty])
 
   // Get neighbors helper
@@ -117,6 +122,9 @@ export function useGame(initialDifficulty = 'easy') {
           }
         }
 
+        // Count as 1 click for chord
+        setClickCount(c => c + 1)
+
         if (hitMine) {
           newBoard = revealAllMines(newBoard)
           setBoard(newBoard)
@@ -148,7 +156,13 @@ export function useGame(initialDifficulty = 'easy') {
       newBoard = placeMines(newBoard, config.mines, row, col)
       setFirstClick(false)
       setGameState(GAME_STATE.PLAYING)
+      // Calculate 3BV after mines are placed
+      const bv3 = calculate3BV(newBoard)
+      setBoard3BV(bv3)
     }
+
+    // Increment click count
+    setClickCount(c => c + 1)
 
     // Reveal cell
     newBoard = revealCell(newBoard, row, col)
@@ -197,6 +211,10 @@ export function useGame(initialDifficulty = 'easy') {
     return { action: newBoard[row][col].state === CELL_STATE.FLAGGED ? 'flag' : 'unflag' }
   }, [board, gameState])
 
+  // Calculate efficiency metrics
+  const efficiency = board3BV > 0 ? Math.round((board3BV / clickCount) * 100) : 0
+  const bv3PerSecond = time > 0 && board3BV > 0 ? (board3BV / time).toFixed(2) : '0.00'
+
   return {
     board,
     gameState,
@@ -205,6 +223,10 @@ export function useGame(initialDifficulty = 'easy') {
     flagCount,
     mineCount: config.mines,
     config,
+    clickCount,
+    board3BV,
+    efficiency: clickCount > 0 ? efficiency : 100,
+    bv3PerSecond,
     startNewGame,
     handleCellClick,
     handleCellRightClick

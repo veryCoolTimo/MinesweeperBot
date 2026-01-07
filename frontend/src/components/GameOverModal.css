@@ -57,6 +57,73 @@
   line-height: 1.4;
 }
 
+/* Efficiency Stats */
+.efficiency-stats {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.efficiency-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.efficiency-row:not(:last-child) {
+  border-bottom: 1px solid var(--bg-secondary);
+}
+
+.efficiency-row.small {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.efficiency-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.efficiency-value {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Star Rating */
+.star-rating {
+  margin-bottom: 20px;
+}
+
+.stars {
+  font-size: 28px;
+  letter-spacing: 4px;
+  min-height: 36px;
+}
+
+.rating-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.speed-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, var(--accent) 0%, #5856d6 100%);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .modal-btn {
   width: 100%;
   padding: 14px 24px;

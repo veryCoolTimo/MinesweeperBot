@@ -22,6 +22,10 @@ function App() {
     time,
     flagCount,
     mineCount,
+    clickCount,
+    board3BV,
+    efficiency,
+    bv3PerSecond,
     startNewGame,
     handleCellClick,
     handleCellRightClick
@@ -104,12 +108,14 @@ function App() {
         } else {
           // Classic or No Flags mode
           if (gameState === GAME_STATE.WON) {
-            recordWin(gameMode, difficulty, time)
+            recordWin(gameMode, difficulty, time, efficiency, bv3PerSecond)
             sendData({
               action: 'game_won',
               difficulty,
               time: time * 1000,
               mode: gameMode,
+              efficiency,
+              bv3s: bv3PerSecond,
               user_id: user?.id
             })
           } else {
@@ -121,7 +127,7 @@ function App() {
 
       return () => clearTimeout(timer)
     }
-  }, [gameState, gameMode, difficulty, time, user, hapticFeedback, sendData, recordWin, recordLoss, startNewGame])
+  }, [gameState, gameMode, difficulty, time, efficiency, bv3PerSecond, user, hapticFeedback, sendData, recordWin, recordLoss, startNewGame])
 
   const onCellClick = useCallback((row, col) => {
     const now = Date.now()
@@ -290,6 +296,10 @@ function App() {
           isOpen={showModal}
           isWin={gameState === GAME_STATE.WON}
           time={time}
+          efficiency={efficiency}
+          bv3PerSecond={bv3PerSecond}
+          board3BV={board3BV}
+          clickCount={clickCount}
           onNewGame={onNewGame}
           onClose={() => setShowModal(false)}
         />

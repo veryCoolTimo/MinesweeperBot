@@ -394,3 +394,62 @@ export function countFlags(board) {
   }
   return count
 }
+
+// Calculate 3BV (Bechtel's Board Benchmark Value)
+// This is the minimum number of clicks needed to solve the board
+export function calculate3BV(board) {
+  const rows = board.length
+  const cols = board[0].length
+  const visited = Array(rows).fill(null).map(() => Array(cols).fill(false))
+
+  let bv3 = 0
+
+  // First pass: count openings (connected regions of zeros)
+  // Each opening counts as 1 click
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (!board[r][c].isMine &&
+          board[r][c].adjacentMines === 0 &&
+          !visited[r][c]) {
+        // Found an opening - BFS to mark all connected zeros and their border
+        bv3++
+        const queue = [[r, c]]
+
+        while (queue.length > 0) {
+          const [cr, cc] = queue.shift()
+          if (visited[cr][cc]) continue
+          visited[cr][cc] = true
+
+          // If this is a zero, explore neighbors
+          if (board[cr][cc].adjacentMines === 0) {
+            for (let dr = -1; dr <= 1; dr++) {
+              for (let dc = -1; dc <= 1; dc++) {
+                if (dr === 0 && dc === 0) continue
+                const nr = cr + dr
+                const nc = cc + dc
+                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols &&
+                    !board[nr][nc].isMine && !visited[nr][nc]) {
+                  queue.push([nr, nc])
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Second pass: count isolated numbered cells
+  // (numbered cells not revealed by any opening)
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (!board[r][c].isMine &&
+          board[r][c].adjacentMines > 0 &&
+          !visited[r][c]) {
+        bv3++
+      }
+    }
+  }
+
+  return bv3
+}
