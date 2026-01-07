@@ -1,19 +1,25 @@
 .board {
   display: grid;
-  gap: 4px;
-  padding: 12px;
+  gap: 3px;
+  padding: 8px;
   background: var(--bg-secondary);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   width: 100%;
-  max-width: min(90vw, 400px);
+  max-width: 95vw;
+  max-height: 60vh;
   aspect-ratio: 1;
   margin: 0 auto;
 }
 
-@media (max-width: 380px) {
+@media (max-height: 700px) {
   .board {
-    gap: 3px;
-    padding: 8px;
+    max-height: 55vh;
+  }
+}
+
+@media (min-height: 800px) {
+  .board {
+    max-height: 65vh;
   }
 }
