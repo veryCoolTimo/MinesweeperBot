@@ -6,6 +6,7 @@ import ModeSelector from './components/ModeSelector'
 import StatsModal from './components/StatsModal'
 import Tutorial from './components/Tutorial'
 import TimedOverlay from './components/TimedOverlay'
+import DuelMode from './components/DuelMode'
 import { useGame, GAME_STATE } from './hooks/useGame'
 import { useTelegram } from './hooks/useTelegram'
 import { useStats } from './hooks/useStats'
@@ -26,6 +27,7 @@ function App() {
     board3BV,
     efficiency,
     bv3PerSecond,
+    progress,
     startNewGame,
     handleCellClick,
     handleCellRightClick
@@ -46,6 +48,7 @@ function App() {
   const [showModeSelector, setShowModeSelector] = useState(false)
   const [showStats, setShowStats] = useState(false)
   const [showTutorial, setShowTutorial] = useState(false)
+  const [showDuel, setShowDuel] = useState(false)
 
   // Timed mode state
   const [timedTimeLeft, setTimedTimeLeft] = useState(TIMED_DURATION)
@@ -215,6 +218,15 @@ function App() {
       return
     }
 
+    if (mode === 'duel') {
+      setShowDuel(true)
+      setShowModeSelector(false)
+      setGameMode(mode)
+      startNewGame()
+      hapticFeedback('light')
+      return
+    }
+
     setGameMode(mode)
     setShowModeSelector(false)
     setFlagMode(false)
@@ -347,6 +359,27 @@ function App() {
       {/* Tutorial */}
       {showTutorial && (
         <Tutorial onComplete={onTutorialComplete} />
+      )}
+
+      {/* Duel Mode */}
+      {showDuel && (
+        <DuelMode
+          userId={user?.id?.toString() || `anon_${Date.now()}`}
+          username={user?.first_name || 'Player'}
+          difficulty={difficulty}
+          progress={progress}
+          isGameOver={gameState === GAME_STATE.WON || gameState === GAME_STATE.LOST}
+          isWin={gameState === GAME_STATE.WON}
+          time={time}
+          onStartGame={(seed) => {
+            startNewGame(difficulty, seed)
+          }}
+          onClose={() => {
+            setShowDuel(false)
+            setGameMode('classic')
+            startNewGame()
+          }}
+        />
       )}
     </div>
   )

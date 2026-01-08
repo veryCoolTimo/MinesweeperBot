@@ -4,6 +4,7 @@ import './Header.css'
 
 const MODE_LABELS = {
   classic: '🎮 Classic',
+  duel: '⚔️ Duel',
   timed: '⏱️ Timed',
   noflags: '🚫 No Flags',
   tutorial: '📖 Tutorial'

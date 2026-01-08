@@ -3,6 +3,7 @@ import './ModeSelector.css'
 
 const MODES = [
   { id: 'classic', label: 'Classic', icon: '🎮', desc: 'Standard minesweeper' },
+  { id: 'duel', label: 'Duel', icon: '⚔️', desc: 'Race against opponent' },
   { id: 'timed', label: 'Timed', icon: '⏱️', desc: '3 min, max wins' },
   { id: 'noflags', label: 'No Flags', icon: '🚫', desc: 'Hardcore mode' },
   { id: 'tutorial', label: 'Tutorial', icon: '📖', desc: 'Learn to play' }

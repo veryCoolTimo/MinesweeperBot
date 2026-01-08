@@ -4,6 +4,7 @@ import {
   CELL_STATE,
   createBoard,
   placeMines,
+  placeMinesSeeded,
   revealCell,
   revealAllMines,
   toggleFlag,
@@ -31,6 +32,7 @@ export function useGame(initialDifficulty = 'easy') {
   const [firstClick, setFirstClick] = useState(true)
   const [clickCount, setClickCount] = useState(0)
   const [board3BV, setBoard3BV] = useState(0)
+  const [seed, setSeed] = useState(null)
   const timerRef = useRef(null)
 
   const config = DIFFICULTIES[difficulty]
@@ -55,7 +57,7 @@ export function useGame(initialDifficulty = 'easy') {
     }
   }, [gameState])
 
-  const startNewGame = useCallback((newDifficulty) => {
+  const startNewGame = useCallback((newDifficulty, newSeed = null) => {
     const diff = newDifficulty || difficulty
     const { rows, cols } = DIFFICULTIES[diff]
 
@@ -67,6 +69,7 @@ export function useGame(initialDifficulty = 'easy') {
     setFirstClick(true)
     setClickCount(0)
     setBoard3BV(0)
+    setSeed(newSeed)
   }, [difficulty])
 
   // Get neighbors helper
@@ -153,7 +156,12 @@ export function useGame(initialDifficulty = 'easy') {
 
     // First click - place mines
     if (firstClick) {
-      newBoard = placeMines(newBoard, config.mines, row, col)
+      // Use seeded placement for multiplayer, normal for single player
+      if (seed) {
+        newBoard = placeMinesSeeded(newBoard, config.mines, row, col, seed)
+      } else {
+        newBoard = placeMines(newBoard, config.mines, row, col)
+      }
       setFirstClick(false)
       setGameState(GAME_STATE.PLAYING)
       // Calculate 3BV after mines are placed
@@ -215,6 +223,20 @@ export function useGame(initialDifficulty = 'easy') {
   const efficiency = board3BV > 0 ? Math.round((board3BV / clickCount) * 100) : 0
   const bv3PerSecond = time > 0 && board3BV > 0 ? (board3BV / time).toFixed(2) : '0.00'
 
+  // Calculate progress (percentage of safe cells revealed)
+  const calculateProgress = () => {
+    const totalSafe = config.rows * config.cols - config.mines
+    let revealed = 0
+    for (let r = 0; r < board.length; r++) {
+      for (let c = 0; c < board[0].length; c++) {
+        if (board[r][c].state === CELL_STATE.REVEALED && !board[r][c].isMine) {
+          revealed++
+        }
+      }
+    }
+    return totalSafe > 0 ? Math.round((revealed / totalSafe) * 100) : 0
+  }
+
   return {
     board,
     gameState,
@@ -227,6 +249,7 @@ export function useGame(initialDifficulty = 'easy') {
     board3BV,
     efficiency: clickCount > 0 ? efficiency : 100,
     bv3PerSecond,
+    progress: calculateProgress(),
     startNewGame,
     handleCellClick,
     handleCellRightClick

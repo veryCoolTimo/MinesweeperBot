@@ -5,6 +5,26 @@ export const DIFFICULTIES = {
   hard: { rows: 16, cols: 16, mines: 60, label: 'Hard' }
 }
 
+// Seeded random number generator (mulberry32)
+function createSeededRandom(seed) {
+  let hash = 0
+  for (let i = 0; i < seed.length; i++) {
+    const char = seed.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash
+  }
+
+  let state = hash >>> 0
+
+  return function() {
+    state |= 0
+    state = state + 0x6D2B79F5 | 0
+    let t = Math.imul(state ^ state >>> 15, 1 | state)
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t
+    return ((t ^ t >>> 14) >>> 0) / 4294967296
+  }
+}
+
 // Cell states
 export const CELL_STATE = {
   HIDDEN: 'hidden',
@@ -323,6 +343,59 @@ export function placeMines(board, mineCount, excludeRow, excludeCol) {
 
   // Fallback: return last generated board even if not perfectly solvable
   console.log('Could not find perfectly solvable board, using best effort')
+  return board
+}
+
+// Place mines with a seed for multiplayer (deterministic)
+export function placeMinesSeeded(board, mineCount, excludeRow, excludeCol, seed) {
+  const rows = board.length
+  const cols = board[0].length
+  const random = createSeededRandom(seed)
+
+  // Reset board
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      board[r][c].isMine = false
+      board[r][c].adjacentMines = 0
+    }
+  }
+
+  // Create exclusion zone around first click
+  const isExcluded = (r, c) => {
+    return Math.abs(r - excludeRow) <= 1 && Math.abs(c - excludeCol) <= 1
+  }
+
+  // Get all valid positions
+  const validPositions = []
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (!isExcluded(r, c)) {
+        validPositions.push([r, c])
+      }
+    }
+  }
+
+  // Shuffle positions using seeded random (Fisher-Yates)
+  for (let i = validPositions.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1))
+    ;[validPositions[i], validPositions[j]] = [validPositions[j], validPositions[i]]
+  }
+
+  // Place mines in first N positions
+  for (let i = 0; i < Math.min(mineCount, validPositions.length); i++) {
+    const [r, c] = validPositions[i]
+    board[r][c].isMine = true
+  }
+
+  // Calculate adjacent mine counts
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (!board[r][c].isMine) {
+        board[r][c].adjacentMines = countAdjacentMines(board, r, c)
+      }
+    }
+  }
+
   return board
 }
 

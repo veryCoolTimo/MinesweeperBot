@@ -1,0 +1,271 @@
+.duel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.duel-modal {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-xl);
+  padding: 32px 24px;
+  text-align: center;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.3s ease;
+}
+
+/* Searching State */
+.duel-searching h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.searching-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid var(--bg-tertiary);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  animation: spin 1s linear infinite;
+}
+
+.searching-hint {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  text-transform: capitalize;
+}
+
+/* Found State */
+.duel-found h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--success);
+  margin-bottom: 20px;
+}
+
+.opponent-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+}
+
+.opponent-avatar {
+  font-size: 32px;
+}
+
+.opponent-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.countdown {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  background: linear-gradient(135deg, var(--accent) 0%, #5856d6 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 1s ease infinite;
+}
+
+.countdown-number {
+  font-size: 48px;
+  font-weight: 700;
+  color: white;
+}
+
+.countdown-text {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+/* Progress Bar (during game) */
+.duel-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-secondary);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 150;
+  box-shadow: var(--shadow-md);
+  animation: slideDown 0.3s ease;
+}
+
+.progress-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 70px;
+}
+
+.progress-item.you .progress-label {
+  color: var(--accent);
+}
+
+.progress-track {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-fill.opponent {
+  background: var(--danger);
+}
+
+.progress-percent {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Result State */
+.duel-result h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.duel-result.win h2 {
+  color: var(--success);
+}
+
+.duel-result.lose h2 {
+  color: var(--text-primary);
+}
+
+.result-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.result-time {
+  font-size: 18px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.result-time strong {
+  color: var(--accent);
+}
+
+.result-text {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.result-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Buttons */
+.duel-btn {
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.duel-btn.primary {
+  background: var(--accent);
+  color: white;
+}
+
+.duel-btn.primary:hover {
+  background: var(--accent-hover);
+  transform: scale(1.02);
+}
+
+.duel-btn.secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.duel-btn.secondary:hover {
+  background: var(--cell-hidden-hover);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
