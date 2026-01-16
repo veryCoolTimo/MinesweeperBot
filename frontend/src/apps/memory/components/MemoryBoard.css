@@ -1,0 +1,15 @@
+.memory-board {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  background: var(--board-bg, #f5f5f5);
+  border-radius: 16px;
+  max-width: min(90vw, 400px);
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark theme */
+[data-theme="dark"] .memory-board {
+  --board-bg: #1c1c1e;
+}
