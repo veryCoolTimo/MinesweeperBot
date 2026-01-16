@@ -12,19 +12,19 @@ export const DIFFICULTIES = {
     name: 'Easy',
     gridSize: 3,
     startLength: 2,
-    showTime: 800
+    showTime: 400
   },
   medium: {
     name: 'Medium',
     gridSize: 4,
     startLength: 3,
-    showTime: 600
+    showTime: 300
   },
   hard: {
     name: 'Hard',
     gridSize: 5,
     startLength: 4,
-    showTime: 450
+    showTime: 220
   }
 }
 
@@ -81,7 +81,7 @@ export function useMemoryGame(initialDifficulty = 'easy') {
 
           timeoutRef.current = setTimeout(() => {
             showNext()
-          }, 150)
+          }, 80)
         }, config.showTime)
       } else {
         setShowingIndex(-1)
@@ -89,7 +89,7 @@ export function useMemoryGame(initialDifficulty = 'easy') {
       }
     }
 
-    timeoutRef.current = setTimeout(showNext, 600)
+    timeoutRef.current = setTimeout(showNext, 300)
   }, [config.showTime])
 
   // Start a new game
@@ -108,7 +108,7 @@ export function useMemoryGame(initialDifficulty = 'easy') {
     setUserSequence([])
     setClickedCell(null)
 
-    setTimeout(() => showSequence(newSequence), 400)
+    setTimeout(() => showSequence(newSequence), 200)
   }, [config, generateSequence, showSequence])
 
   // Handle cell click
@@ -157,7 +157,7 @@ export function useMemoryGame(initialDifficulty = 'easy') {
       setUserSequence([])
 
       // Show new sequence after delay
-      setTimeout(() => showSequence(newSequence), 1200)
+      setTimeout(() => showSequence(newSequence), 600)
 
       return { action: 'levelUp', level: newLevel, score: newScore }
     }
