@@ -4,7 +4,6 @@ export const GAME_STATE = {
   IDLE: 'idle',
   SHOWING: 'showing',
   INPUT: 'input',
-  WON: 'won',
   LOST: 'lost'
 }
 
@@ -12,23 +11,20 @@ export const DIFFICULTIES = {
   easy: {
     name: 'Easy',
     gridSize: 3,
-    startLength: 3,
-    showTime: 800,
-    maxLevel: 10
+    startLength: 2,
+    showTime: 800
   },
   medium: {
     name: 'Medium',
     gridSize: 4,
-    startLength: 4,
-    showTime: 600,
-    maxLevel: 15
+    startLength: 3,
+    showTime: 600
   },
   hard: {
     name: 'Hard',
     gridSize: 5,
-    startLength: 5,
-    showTime: 400,
-    maxLevel: 20
+    startLength: 4,
+    showTime: 450
   }
 }
 
@@ -45,6 +41,7 @@ export function useMemoryGame(initialDifficulty = 'easy') {
   const [sequence, setSequence] = useState([])
   const [userSequence, setUserSequence] = useState([])
   const [activeCell, setActiveCell] = useState(null)
+  const [clickedCell, setClickedCell] = useState(null)
   const [showingIndex, setShowingIndex] = useState(-1)
 
   const timeoutRef = useRef(null)
@@ -69,6 +66,7 @@ export function useMemoryGame(initialDifficulty = 'easy') {
   const showSequence = useCallback((seq) => {
     setGameState(GAME_STATE.SHOWING)
     setShowingIndex(-1)
+    setClickedCell(null)
 
     let index = 0
 
@@ -83,7 +81,7 @@ export function useMemoryGame(initialDifficulty = 'easy') {
 
           timeoutRef.current = setTimeout(() => {
             showNext()
-          }, 200) // Gap between cells
+          }, 150)
         }, config.showTime)
       } else {
         setShowingIndex(-1)
@@ -91,8 +89,7 @@ export function useMemoryGame(initialDifficulty = 'easy') {
       }
     }
 
-    // Initial delay before showing
-    timeoutRef.current = setTimeout(showNext, 500)
+    timeoutRef.current = setTimeout(showNext, 600)
   }, [config.showTime])
 
   // Start a new game
@@ -109,14 +106,18 @@ export function useMemoryGame(initialDifficulty = 'easy') {
     setScore(0)
     setSequence(newSequence)
     setUserSequence([])
+    setClickedCell(null)
 
-    // Small delay then show sequence
-    setTimeout(() => showSequence(newSequence), 300)
+    setTimeout(() => showSequence(newSequence), 400)
   }, [config, generateSequence, showSequence])
 
   // Handle cell click
   const handleCellClick = useCallback((cellIndex) => {
     if (gameState !== GAME_STATE.INPUT) return null
+
+    // Show click feedback
+    setClickedCell(cellIndex)
+    setTimeout(() => setClickedCell(null), 200)
 
     const newUserSequence = [...userSequence, cellIndex]
     setUserSequence(newUserSequence)
@@ -130,41 +131,33 @@ export function useMemoryGame(initialDifficulty = 'easy') {
       setGameState(GAME_STATE.LOST)
 
       // Update high score if needed
-      if (score > highScore[difficulty]) {
-        setHighScore(prev => ({ ...prev, [difficulty]: score }))
+      const finalScore = score
+      if (finalScore > highScore[difficulty]) {
+        setHighScore(prev => ({ ...prev, [difficulty]: finalScore }))
       }
 
       return { action: 'wrong', correct: sequence[expectedIndex], clicked: cellIndex }
     }
 
-    // Correct click
+    // Correct click - check if level complete
     if (newUserSequence.length === sequence.length) {
       // Level complete!
       const levelScore = level * 10 * (difficulty === 'hard' ? 3 : difficulty === 'medium' ? 2 : 1)
       const newScore = score + levelScore
       setScore(newScore)
 
-      if (level >= config.maxLevel) {
-        // Won the game!
-        setGameState(GAME_STATE.WON)
-        if (newScore > highScore[difficulty]) {
-          setHighScore(prev => ({ ...prev, [difficulty]: newScore }))
-        }
-        return { action: 'won', score: newScore }
-      }
-
-      // Next level
+      // Next level - infinite game!
       const newLevel = level + 1
       setLevel(newLevel)
 
-      // Generate longer sequence
+      // Add one more to the sequence
       const newLength = config.startLength + newLevel - 1
       const newSequence = generateSequence(newLength)
       setSequence(newSequence)
       setUserSequence([])
 
       // Show new sequence after delay
-      setTimeout(() => showSequence(newSequence), 1000)
+      setTimeout(() => showSequence(newSequence), 1200)
 
       return { action: 'levelUp', level: newLevel, score: newScore }
     }
@@ -182,7 +175,6 @@ export function useMemoryGame(initialDifficulty = 'easy') {
   }, [])
 
   return {
-    // State
     gameState,
     difficulty,
     level,
@@ -191,11 +183,10 @@ export function useMemoryGame(initialDifficulty = 'easy') {
     sequence,
     userSequence,
     activeCell,
+    clickedCell,
     showingIndex,
     gridSize: config.gridSize,
     sequenceLength: sequence.length,
-
-    // Actions
     startGame,
     handleCellClick,
     setDifficulty

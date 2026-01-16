@@ -4,6 +4,7 @@ import './MemoryBoard.css'
 function MemoryBoard({
   gridSize,
   activeCell,
+  clickedCell,
   showingIndex,
   sequence,
   isInput,
@@ -15,8 +16,7 @@ function MemoryBoard({
 
   for (let i = 0; i < totalCells; i++) {
     const isActive = activeCell === i
-    // Find what number to show (position in sequence)
-    const sequencePosition = sequence.indexOf(i)
+    const isClicked = clickedCell === i
     const showNumber = isActive && showingIndex >= 0
 
     cells.push(
@@ -24,6 +24,7 @@ function MemoryBoard({
         key={i}
         index={i}
         isActive={isActive}
+        isClicked={isClicked}
         isInput={isInput}
         showNumber={showNumber}
         number={showingIndex + 1}

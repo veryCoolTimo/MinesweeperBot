@@ -1,6 +1,6 @@
 import './MemoryCell.css'
 
-function MemoryCell({ index, isActive, isInput, showNumber, number, onClick, disabled }) {
+function MemoryCell({ index, isActive, isClicked, isInput, showNumber, number, onClick, disabled }) {
   const handleClick = () => {
     if (!disabled && isInput) {
       onClick(index)
@@ -9,12 +9,14 @@ function MemoryCell({ index, isActive, isInput, showNumber, number, onClick, dis
 
   return (
     <div
-      className={`memory-cell ${isActive ? 'active' : ''} ${isInput ? 'input-mode' : ''} ${disabled ? 'disabled' : ''}`}
+      className={`memory-cell ${isActive ? 'active' : ''} ${isClicked ? 'clicked' : ''} ${isInput ? 'input-mode' : ''} ${disabled ? 'disabled' : ''}`}
       onClick={handleClick}
     >
-      {isActive && showNumber && (
-        <span className="cell-number">{number}</span>
-      )}
+      <div className="cell-inner">
+        {isActive && showNumber && (
+          <span className="cell-number">{number}</span>
+        )}
+      </div>
     </div>
   )
 }

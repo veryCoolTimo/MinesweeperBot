@@ -1,11 +1,24 @@
 .memory-board {
   display: grid;
-  gap: 8px;
-  padding: 12px;
-  background: var(--bg-secondary);
-  border-radius: var(--radius-lg);
-  max-width: min(90vw, 360px);
+  gap: 10px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  max-width: min(88vw, 340px);
   width: 100%;
   margin: 0 auto;
-  box-shadow: var(--shadow-md);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+[data-theme="dark"] .memory-board {
+  background: rgba(44, 44, 46, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2);
 }

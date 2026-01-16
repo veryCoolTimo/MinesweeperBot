@@ -14,23 +14,23 @@ function MemoryApp() {
     highScore,
     sequence,
     activeCell,
+    clickedCell,
     showingIndex,
     gridSize,
     sequenceLength,
+    userSequence,
     startGame,
     handleCellClick
   } = useMemoryGame('easy')
 
   const [showResult, setShowResult] = useState(false)
-  const [lastClickResult, setLastClickResult] = useState(null)
 
-  // Handle game end
   useEffect(() => {
-    if (gameState === GAME_STATE.WON || gameState === GAME_STATE.LOST) {
+    if (gameState === GAME_STATE.LOST) {
       setTimeout(() => {
-        hapticFeedback(gameState === GAME_STATE.WON ? 'success' : 'error')
+        hapticFeedback('error')
         setShowResult(true)
-      }, 300)
+      }, 400)
     }
   }, [gameState, hapticFeedback])
 
@@ -38,54 +38,59 @@ function MemoryApp() {
     const result = handleCellClick(cellIndex)
     if (!result) return
 
-    setLastClickResult(result)
-
     if (result.action === 'correct') {
       hapticFeedback('light')
     } else if (result.action === 'levelUp') {
       hapticFeedback('success')
     } else if (result.action === 'wrong') {
       hapticFeedback('error')
-    } else if (result.action === 'won') {
-      hapticFeedback('success')
     }
   }, [handleCellClick, hapticFeedback])
 
   const onStartGame = useCallback((diff) => {
     hapticFeedback('medium')
     setShowResult(false)
-    setLastClickResult(null)
     startGame(diff)
   }, [startGame, hapticFeedback])
 
   const isShowingSequence = gameState === GAME_STATE.SHOWING
   const isInputMode = gameState === GAME_STATE.INPUT
-  const isGameOver = gameState === GAME_STATE.WON || gameState === GAME_STATE.LOST
+  const progress = sequenceLength > 0 ? Math.round((userSequence.length / sequenceLength) * 100) : 0
 
   return (
     <div className="memory-app">
+      {/* Header */}
       <header className="memory-header">
-        <h1>🧠 Memory</h1>
-        <div className="stats-row">
-          <div className="stat">
-            <span className="stat-label">Level</span>
-            <span className="stat-value">{level}</span>
-          </div>
-          <div className="stat">
-            <span className="stat-label">Score</span>
-            <span className="stat-value">{score}</span>
-          </div>
-          <div className="stat">
-            <span className="stat-label">Best</span>
-            <span className="stat-value">{highScore}</span>
-          </div>
+        <div className="header-content">
+          <h1>Memory</h1>
+          {gameState !== GAME_STATE.IDLE && (
+            <div className="stats-pills">
+              <div className="pill">
+                <span className="pill-value">{level}</span>
+                <span className="pill-label">Level</span>
+              </div>
+              <div className="pill accent">
+                <span className="pill-value">{score}</span>
+                <span className="pill-label">Score</span>
+              </div>
+              <div className="pill">
+                <span className="pill-value">{highScore}</span>
+                <span className="pill-label">Best</span>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
+      {/* Main */}
       <main className="memory-main">
         {gameState === GAME_STATE.IDLE ? (
           <div className="start-screen">
-            <h2>Select Difficulty</h2>
+            <div className="logo-container">
+              <div className="logo-icon">🧠</div>
+              <p className="tagline">Test your memory</p>
+            </div>
+
             <div className="difficulty-buttons">
               {Object.entries(DIFFICULTIES).map(([key, config]) => (
                 <button
@@ -94,29 +99,34 @@ function MemoryApp() {
                   onClick={() => onStartGame(key)}
                 >
                   <span className="diff-name">{config.name}</span>
-                  <span className="diff-info">{config.gridSize}×{config.gridSize} grid</span>
+                  <span className="diff-desc">{config.gridSize}×{config.gridSize} • Start with {config.startLength}</span>
                 </button>
               ))}
             </div>
           </div>
         ) : (
-          <>
+          <div className="game-container">
+            {/* Status */}
             <div className="game-status">
               {isShowingSequence && (
-                <p className="status-text showing">
-                  Watch carefully! ({showingIndex + 1}/{sequenceLength})
-                </p>
+                <div className="status-badge watching">
+                  <span className="status-dot"></span>
+                  Watch carefully
+                </div>
               )}
               {isInputMode && (
-                <p className="status-text input">
-                  Your turn! Tap the sequence
-                </p>
+                <div className="status-badge playing">
+                  <span className="status-dot"></span>
+                  Your turn
+                </div>
               )}
             </div>
 
+            {/* Board */}
             <MemoryBoard
               gridSize={gridSize}
               activeCell={activeCell}
+              clickedCell={clickedCell}
               showingIndex={showingIndex}
               sequence={sequence}
               isInput={isInputMode}
@@ -124,12 +134,19 @@ function MemoryApp() {
               onCellClick={onCellClick}
             />
 
+            {/* Progress */}
             {isInputMode && (
-              <div className="progress-indicator">
-                <span>Progress: {sequence.length > 0 ? `${Math.round((lastClickResult?.remaining !== undefined ? (sequenceLength - lastClickResult.remaining) : 0) / sequenceLength * 100)}%` : '0%'}</span>
+              <div className="progress-container">
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+                <span className="progress-text">{userSequence.length} / {sequenceLength}</span>
               </div>
             )}
-          </>
+          </div>
         )}
       </main>
 
@@ -137,23 +154,29 @@ function MemoryApp() {
       {showResult && (
         <div className="modal-overlay" onClick={() => setShowResult(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <h2>{gameState === GAME_STATE.WON ? '🎉 Amazing!' : '😢 Game Over'}</h2>
-            <div className="result-stats">
-              <div className="result-stat">
-                <span>Level Reached</span>
-                <strong>{level}</strong>
+            <div className="modal-emoji">😔</div>
+            <h2>Game Over</h2>
+
+            <div className="result-cards">
+              <div className="result-card">
+                <span className="result-value">{level}</span>
+                <span className="result-label">Level</span>
               </div>
-              <div className="result-stat">
-                <span>Final Score</span>
-                <strong>{score}</strong>
+              <div className="result-card primary">
+                <span className="result-value">{score}</span>
+                <span className="result-label">Score</span>
               </div>
-              {score >= highScore && score > 0 && (
-                <p className="new-record">🏆 New High Score!</p>
-              )}
             </div>
+
+            {score > 0 && score >= highScore && (
+              <div className="new-record">
+                <span>🏆</span> New High Score!
+              </div>
+            )}
+
             <div className="modal-buttons">
               <button className="btn primary" onClick={() => onStartGame(difficulty)}>
-                Play Again
+                Try Again
               </button>
               <button className="btn secondary" onClick={() => {
                 setShowResult(false)
