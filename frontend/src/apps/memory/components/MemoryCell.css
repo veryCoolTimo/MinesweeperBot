@@ -1,15 +1,15 @@
 .memory-cell {
   aspect-ratio: 1;
-  background: var(--cell-bg, #e8e8e8);
-  border-radius: 12px;
+  background: var(--cell-hidden);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .memory-cell:active:not(.disabled) {
@@ -17,28 +17,28 @@
 }
 
 .memory-cell.input-mode:not(.disabled):hover {
-  background: var(--cell-hover, #d8d8d8);
+  background: var(--cell-hidden-hover);
 }
 
 .memory-cell.active {
-  background: var(--primary-color, #007aff);
-  box-shadow: 0 0 20px rgba(0, 122, 255, 0.5);
-  animation: pulse 0.3s ease;
+  background: var(--accent);
+  box-shadow: 0 0 16px rgba(0, 122, 255, 0.4);
+  animation: cellPulse 0.3s ease;
 }
 
 .memory-cell.disabled {
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .cell-number {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes pulse {
+@keyframes cellPulse {
   0% {
     transform: scale(1);
   }
@@ -48,10 +48,4 @@
   100% {
     transform: scale(1);
   }
-}
-
-/* Dark theme */
-[data-theme="dark"] .memory-cell {
-  --cell-bg: #2c2c2e;
-  --cell-hover: #3a3a3c;
 }
